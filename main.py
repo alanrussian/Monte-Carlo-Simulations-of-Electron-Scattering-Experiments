@@ -66,7 +66,8 @@ class Main(QMainWindow):
 		# RETRIEVE THIS FROM INPUT
 		startX, stopX = -1.42, -0.92
 
-		print "Computing integral for when the beam is off...",
+		print "----------Laser Off:----------"
+		print "Integral, Error"
 		laserOffSimulation = self.configureScatterSimulation(ScatterSimulation())
 		if laserOffSimulation is False: return
 		laserOffSimulation.laserBeamRadius = 0
@@ -82,7 +83,7 @@ class Main(QMainWindow):
 		laserOffIntegral = laserOffSimulation.integrateBins(startX, stopX, scale)
 		laserOffError = 0
 		laserOffP = laserOffIntegral / laserOffSimulation.integrateBins(scale = scale)
-		print laserOffIntegral
+		print laserOffIntegral, laserOffError
 		laserOnSimulation = self.configureScatterSimulation(ScatterSimulation())
 		if laserOnSimulation is False: return
 
@@ -90,10 +91,12 @@ class Main(QMainWindow):
 		errors = []
 		polarizationAngles = range(0, 91)
 
+		print
+		print "----------Laser On:----------"
+		print "Angle, Integral, Error"
 		for polarizationAngle in polarizationAngles:
 			laserOnSimulation.laserBeamPolarizationAngleInDegrees = polarizationAngle
 
-			# print "Computing integral for polarization angle %s degrees..." % polarizationAngle,
 			print polarizationAngle,
 			laserOnSimulation.run()
 
@@ -108,12 +111,6 @@ class Main(QMainWindow):
 			print integral, errors[-1]
 
 			laserOnSimulation.reset()
-
-		print "Integrals:"
-		print integrals
-
-		print "Errors:"
-		print errors
 
 		import numpy
 		import matplotlib.pyplot
