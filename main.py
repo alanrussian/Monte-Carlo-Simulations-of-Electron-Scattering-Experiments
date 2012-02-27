@@ -80,9 +80,9 @@ class Main(QMainWindow):
 		scale = theoreticalRatioInIntersection / calculatedRatioInIntersection
 
 		laserOffIntegral = laserOffSimulation.integrateBins(startX, stopX, scale)
-		laserOffError = 0 # math.sqrt(sum(laserOffSimulation.getBins()))
+		laserOffError = 0
+		laserOffP = laserOffIntegral / laserOffSimulation.integrateBins(scale = scale)
 		print laserOffIntegral
-
 		laserOnSimulation = self.configureScatterSimulation(ScatterSimulation())
 		if laserOnSimulation is False: return
 
@@ -101,12 +101,13 @@ class Main(QMainWindow):
 			integral = binsIntegral - laserOffIntegral
 			integrals.append(integral)
 
-			laserOnError = math.sqrt(binsIntegral)
-			errors.append(math.sqrt(laserOffError ** 2 + laserOnError ** 2))
+			n = laserOnSimulation.unaffectedByLaserCount
+			p = binsIntegral / laserOnSimulation.integrateBins() * theoreticalRatioInIntersection
+			errors.append(math.sqrt(n * p * (1 - p)))
 
 			print integral, errors[-1]
 
-			laserOnSimulation.resetBins()
+			laserOnSimulation.reset()
 
 		print "Integrals:"
 		print integrals

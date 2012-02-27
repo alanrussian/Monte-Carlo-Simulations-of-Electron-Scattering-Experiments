@@ -18,6 +18,7 @@ class ScatterSimulation:
 		self.electronsCount = None
 		self.displayGraph = False
 		self.bins = {0: 0}
+		self.unaffectedByLaserCount = 0
 
 	def getIntensity(self, wavelength, fluxDensity, electronEnergy, polarizationAngle = 0):
 		"""
@@ -112,6 +113,7 @@ class ScatterSimulation:
 						completelyIntersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
 				else:
 					self.bins[0] += 1
+					self.unaffectedByLaserCount += 1
 
 					if self.displayGraph:
 						partiallyIntersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
@@ -149,8 +151,9 @@ class ScatterSimulation:
 	def getBins(self):
 		return self.bins
 
-	def resetBins(self):
+	def reset(self):
 		self.bins = {0: 0}
+		self.unaffectedByLaserCount = 0
 
 	def getRandomPoint(self, maximums):
 		coordinates = []
