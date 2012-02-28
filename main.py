@@ -80,9 +80,9 @@ class Main(QMainWindow):
 		calculatedRatioInIntersection = sum(laserOffSimulation.getBins().values()) / laserOffSimulation.electronsCount
 		scale = theoreticalRatioInIntersection / calculatedRatioInIntersection
 
-		laserOffIntegral = laserOffSimulation.integrateBins(startX, stopX, scale)
+		laserOffIntegral = laserOffSimulation.sumBins(startX, stopX, scale)
 		laserOffError = 0
-		laserOffP = laserOffIntegral / laserOffSimulation.integrateBins(scale = scale)
+		laserOffP = laserOffIntegral / laserOffSimulation.sumBins(scale = scale)
 		print laserOffIntegral, laserOffError
 		laserOnSimulation = self.configureScatterSimulation(ScatterSimulation())
 		if laserOnSimulation is False: return
@@ -93,22 +93,23 @@ class Main(QMainWindow):
 
 		print
 		print "----------Laser On:----------"
-		print "Angle, Integral, Error"
+		print "Angle, Integral, Error, n, p"
 		for polarizationAngle in polarizationAngles:
 			laserOnSimulation.laserBeamPolarizationAngleInDegrees = polarizationAngle
 
 			print polarizationAngle,
 			laserOnSimulation.run()
 
-			binsIntegral = laserOnSimulation.integrateBins(startX, stopX)
+			binsIntegral = laserOnSimulation.sumBins(startX, stopX)
 			integral = binsIntegral - laserOffIntegral
 			integrals.append(integral)
 
-			n = laserOnSimulation.unaffectedByLaserCount
-			p = binsIntegral / laserOnSimulation.integrateBins() * theoreticalRatioInIntersection
+			n = laserOnSimulation.affectedByLaserCount
+			p = laserOnSimulation.sumBins(startX, stopX, includeUnaffected = False) / laserOnSimulation.affectedByLaserCount
+			
 			errors.append(math.sqrt(n * p * (1 - p)))
 
-			print integral, errors[-1]
+			print integral, errors[-1], n, p
 
 			laserOnSimulation.reset()
 
