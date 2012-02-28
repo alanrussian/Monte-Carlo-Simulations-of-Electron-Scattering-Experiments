@@ -18,6 +18,7 @@ class ScatterSimulation:
 		self.electronsCount = None
 		self.displayGraph = False
 		self.bins = {0: 0}
+		self.affectedByLaserCount = 0
 		self.unaffectedByLaserCount = 0
 
 	def getIntensity(self, wavelength, fluxDensity, electronEnergy, polarizationAngle = 0):
@@ -111,6 +112,8 @@ class ScatterSimulation:
 
 					if self.displayGraph:
 						completelyIntersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
+
+					self.affectedByLaserCount += 1
 				else:
 					self.bins[0] += 1
 					self.unaffectedByLaserCount += 1
@@ -153,6 +156,7 @@ class ScatterSimulation:
 
 	def reset(self):
 		self.bins = {0: 0}
+		self.affectedByLaserCount = 0
 		self.unaffectedByLaserCount = 0
 
 	def getRandomPoint(self, maximums):
@@ -197,14 +201,18 @@ class ScatterSimulation:
 		for binNumber, binCount in sorted(self.bins.iteritems()):
 			print str(binNumber).rjust(3) +": "+ str(binCount)
 
-	def binsToPoints(self):
+	def binsToPoints(self, includeUnaffected = True):
+		bins = self.bins.copy()
+		if not includeUnaffected:
+			bins[0] -= self.unaffectedByLaserCount
+
 		yBaseValues = []
 		with open("values.csv", "rb") as csvFile:
 			csvReader = csv.reader(csvFile, quoting=csv.QUOTE_NONNUMERIC)
 			for (x, y) in csvReader:
 				yBaseValues.append(y)
 
-		binNumbers = self.bins.keys()
+		binNumbers = bins.keys()
 		lowestBin = min(binNumbers)
 		highestBin = max(binNumbers)
 
@@ -212,7 +220,7 @@ class ScatterSimulation:
 		xZeroIndex = 1000 - (117 * lowestBin)
 		yValues = [0] * len(xValues)
 
-		for (binNumber, binCount) in self.bins.iteritems():
+		for (binNumber, binCount) in bins.iteritems():
 			xOffset = 117 * binNumber
 			for (baseIndex, index) in zip(xrange(0, 2001), xrange(xZeroIndex - 1000 + xOffset, xZeroIndex + 1001 + xOffset)):
 				yValues[index] += yBaseValues[baseIndex] * binCount
@@ -263,16 +271,16 @@ class ScatterSimulation:
 
 		return sum
 
-	def integrateBins(self, startX = False, stopX = False, scale = 1):
-		xValues, yValues = self.binsToPoints()
+	def integrateBins(self, startX = False, stopX = False, scale = 1, includeUnaffected = True):
+		xValues, yValues = self.binsToPoints(includeUnaffected)
 
 		if not scale == 1:
 			yValues = [y * scale for y in yValues]
 
 		return self._integratePoints(xValues, yValues, startX, stopX)
 
-	def sumBins(self, startX = False, stopX = False, scale = 1):
-		xValues, yValues = self.binsToPoints()
+	def sumBins(self, startX = False, stopX = False, scale = 1, includeUnaffected = True):
+		xValues, yValues = self.binsToPoints(includeUnaffected)
 
 		if not scale == 1:
 			yValues = [y * scale for y in yValues]
