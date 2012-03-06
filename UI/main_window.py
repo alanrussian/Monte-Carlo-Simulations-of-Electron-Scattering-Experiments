@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Tue Feb 21 12:13:05 2012
+# Created: Mon Mar 05 20:40:34 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -126,6 +126,6 @@ class Ui_MainWindow(object):
         self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Wavelength (microns):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("MainWindow", "Electron Energy (eV):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("MainWindow", "Power (W):", None, QtGui.QApplication.UnicodeUTF8))
-        self.graphBins.setText(QtGui.QApplication.translate("MainWindow", "Graph Energies and Counts", None, QtGui.QApplication.UnicodeUTF8))
+        self.graphBins.setText(QtGui.QApplication.translate("MainWindow", "Energy Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.graphIntegrals.setText(QtGui.QApplication.translate("MainWindow", "Graph Polarization Angles and Integrals", None, QtGui.QApplication.UnicodeUTF8))
 
