@@ -375,3 +375,30 @@ def getCylinderCylinderCylinderIntersectionVolume(horizontalCylinderOneRadius, h
 
 	horizontalCylinderOneVolume = math.pi * horizontalCylinderOneRadiusSquared * boundLength
 	return pointsInIntersection * horizontalCylinderOneVolume / pointsToGenerate
+
+def getCylinderCylinderIntersectionVolume(cylinderOneRadius, cylinderTwoRadius, angleInDegrees, pointsToGenerate = 10**5):
+	angleInRadians = angleInDegrees * math.pi / 180
+
+	if angleInDegrees == 90:
+		boundLength = cylinderOneRadius * 2.0
+	else:
+		boundLength = (cylinderOneRadius * 2.0 / math.sin(angleInRadians)) + (cylinderTwoRadius * 2.0 / math.tan(angleInRadians))
+
+	cylinderOneRadiusSquared = math.pow(cylinderOneRadius, 2)
+	cylinderTwoRadiusSquared = math.pow(cylinderTwoRadius, 2)
+
+	points = pointsToGenerate = int(pointsToGenerate)
+	pointsInIntersection = 0
+
+	while points > 0:
+		points -= 1
+
+		randomPointInBound = Point.getRandomPointInCylinder(cylinderOneRadius, boundLength)
+		rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(angleInRadians)
+
+		# Check intersection
+		if math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= cylinderTwoRadiusSquared:
+			pointsInIntersection += 1
+
+	cylinderOneVolume = math.pi * cylinderOneRadiusSquared * boundLength
+	return pointsInIntersection * cylinderOneVolume / pointsToGenerate
