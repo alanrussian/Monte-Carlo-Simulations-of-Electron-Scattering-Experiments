@@ -72,7 +72,7 @@ class ScatterSimulation:
 		while electronsCount > 0:
 			electronsCount -= 1
 
-			randomPointInBound = self.getRandomPointInCylinder(self.electronBeamRadius, boundLength)
+			randomPointInBound = Point.getRandomPointInCylinder(self.electronBeamRadius, boundLength)
 			rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(horizontalAngleInRadians)
 
 			# Check electron beam intersection with gas jet
@@ -158,44 +158,6 @@ class ScatterSimulation:
 		self.bins = {0: 0}
 		self.affectedByLaserCount = 0
 		self.unaffectedByLaserCount = 0
-
-	def getRandomPoint(self, maximums):
-		coordinates = []
-		for maximum in maximums:
-			coordinates.append(random.uniform(0, maximum))
-
-		return Point(coordinates)
-
-	def getRandomPointInCylinder(self, radius, height):
-		# Square Root Method
-		polarR = math.sqrt(random.uniform(0, math.pow(radius, 2)))
-		# polarR = math.sqrt(randomLaser(math.pow(radius, 2), radius/10))
-		polarTheta = random.uniform(0, 2 * math.pi)
-
-		if height == False:
-			return Point((polarR * math.cos(polarTheta), polarR * math.sin(polarTheta)))
-		else:
-			halfHeight = height / 2
-			return Point((random.uniform(-halfHeight, halfHeight), polarR * math.cos(polarTheta), polarR * math.sin(polarTheta)))
-
-		# Square Method
-		pointInCircle = Point((random.uniform(-radius, radius), random.uniform(-radius, radius)))
-		while pointInCircle.distanceTo(Point((0, 0))) > radius:
-			pointInCircle = getRandomPoint((random.uniform(-radius, radius), random.uniform(-radius, radius)))
-
-		polarR = math.sqrt(random.uniform(0, math.pow(radius, 2)))
-		polarTheta = random.uniform(0, 2 * math.pi)
-		return Point((random.uniform(-halfHeight, halfHeight), pointInCircle.coordinates[1], pointInCircle.coordinates[0]))
-
-	def randomLaser(self, max, sigma):
-		mu = 0
-
-		number = random.gauss(mu, sigma)
-
-		while math.fabs(number) > max:
-			number = random.gauss(mu, sigma)
-
-		return number
 
 	def printBins(self):
 		for binNumber, binCount in sorted(self.bins.iteritems()):
@@ -312,4 +274,104 @@ class Point:
 
 		return Point((x,y))
 
-""" Create text based (not python based) input file """
+	@staticmethod
+	def getRandomPoint(maximums):
+		coordinates = []
+		for maximum in maximums:
+			coordinates.append(random.uniform(0, maximum))
+
+		return Point(coordinates)
+
+	@staticmethod
+	def getRandomPointInCylinder(radius, height):
+		# Square Root Method
+		polarR = math.sqrt(random.uniform(0, math.pow(radius, 2)))
+		# polarR = math.sqrt(Point.randomLaser(math.pow(radius, 2), radius/10))
+		polarTheta = random.uniform(0, 2 * math.pi)
+
+		if height == False:
+			return Point((polarR * math.cos(polarTheta), polarR * math.sin(polarTheta)))
+		else:
+			halfHeight = height / 2
+			return Point((random.uniform(-halfHeight, halfHeight), polarR * math.cos(polarTheta), polarR * math.sin(polarTheta)))
+
+		# Square Method
+		pointInCircle = Point((random.uniform(-radius, radius), random.uniform(-radius, radius)))
+		while pointInCircle.distanceTo(Point((0, 0))) > radius:
+			pointInCircle = Point.getRandomPoint((random.uniform(-radius, radius), random.uniform(-radius, radius)))
+
+		polarR = math.sqrt(random.uniform(0, math.pow(radius, 2)))
+		polarTheta = random.uniform(0, 2 * math.pi)
+		return Point((random.uniform(-halfHeight, halfHeight), pointInCircle.coordinates[1], pointInCircle.coordinates[0]))
+
+	@staticmethod
+	def randomLaser(max, sigma):
+		mu = 0
+
+		number = random.gauss(mu, sigma)
+
+		while math.fabs(number) > max:
+			number = random.gauss(mu, sigma)
+
+		return number
+
+def getCylinderConeCylinderIntersectionVolume(horizontalCylinderRadius, horizontalConeRadius, horizontalConeIntersectionDistance, horizontalConeApexLength, verticalCylinderRadius, horizontalAngleInDegrees, pointsToGenerate = 10**5):
+	horizontalAngleInRadians = horizontalAngleInDegrees * math.pi / 180
+
+	if horizontalAngleInDegrees == 90:
+		boundLength = horizontalCylinderRadius * 2.0
+	else:
+		boundLength = (horizontalCylinderRadius * 2.0 / math.sin(horizontalAngleInRadians)) + (horizontalConeRadius * 2.0 / math.tan(horizontalAngleInRadians))
+
+	horizontalCylinderRadiusSquared = math.pow(horizontalCylinderRadius, 2)
+	verticalCylinderRadiusSquared = math.pow(verticalCylinderRadius, 2)
+
+	points = pointsToGenerate = int(pointsToGenerate)
+	pointsInIntersection = 0
+
+	while points > 0:
+		points -= 1
+
+		randomPointInBound = Point.getRandomPointInCylinder(horizontalCylinderRadius, boundLength)
+		rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(horizontalAngleInRadians)
+
+		# Check horizontal cylinder intersection with vertical cylinder
+		if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= verticalCylinderRadiusSquared:
+			# Check horizontal cylinder intersection with horizontal cone
+			horizontalConeRadiusAtPoint = horizontalConeRadius / horizontalConeApexLength * (horizontalConeApexLength - (horizontalConeIntersectionDistance + rotatedPointInBound.coordinates[0]))
+			horizontalConeSquaredAtPoint = math.pow(horizontalConeRadiusAtPoint, 2)
+			if math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= horizontalConeSquaredAtPoint:
+				pointsInIntersection += 1
+
+	horizontalCylinderVolume = math.pi * horizontalCylinderRadiusSquared * boundLength
+	return pointsInIntersection * horizontalCylinderVolume / pointsToGenerate
+
+def getCylinderCylinderCylinderIntersectionVolume(horizontalCylinderOneRadius, horizontalCylinderTwoRadius, verticalCylinderRadius, horizontalAngleInDegrees, pointsToGenerate = 10**5):
+	horizontalAngleInRadians = horizontalAngleInDegrees * math.pi / 180
+
+	if horizontalAngleInDegrees == 90:
+		boundLength = horizontalCylinderOneRadius * 2.0
+	else:
+		boundLength = (horizontalCylinderOneRadius * 2.0 / math.sin(horizontalAngleInRadians)) + (horizontalCylinderTwoRadius * 2.0 / math.tan(horizontalAngleInRadians))
+
+	horizontalCylinderOneRadiusSquared = math.pow(horizontalCylinderOneRadius, 2)
+	horizontalCylinderTwoRadiusSquared = math.pow(horizontalCylinderTwoRadius, 2)
+	verticalCylinderRadiusSquared = math.pow(verticalCylinderRadius, 2)
+
+	points = pointsToGenerate = int(pointsToGenerate)
+	pointsInIntersection = 0
+
+	while points > 0:
+		points -= 1
+
+		randomPointInBound = Point.getRandomPointInCylinder(horizontalCylinderOneRadius, boundLength)
+		rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(horizontalAngleInRadians)
+
+		# Check horizontal cylinder intersection with vertical cylinder
+		if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= verticalCylinderRadiusSquared:
+			# Check horizontal cylinder intersection with horizontal cone
+			if math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= horizontalCylinderTwoRadiusSquared:
+				pointsInIntersection += 1
+
+	horizontalCylinderOneVolume = math.pi * horizontalCylinderOneRadiusSquared * boundLength
+	return pointsInIntersection * horizontalCylinderOneVolume / pointsToGenerate
