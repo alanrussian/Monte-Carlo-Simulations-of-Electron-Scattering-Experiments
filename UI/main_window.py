@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Mon Mar 05 20:40:34 2012
+# Created: Tue Mar 20 11:43:39 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,6 +92,15 @@ class Ui_MainWindow(object):
         self.laserBeamPower = QtGui.QLineEdit(self.groupBox_3)
         self.laserBeamPower.setObjectName(_fromUtf8("laserBeamPower"))
         self.formLayout_5.setWidget(6, QtGui.QFormLayout.FieldRole, self.laserBeamPower)
+        self.label_10 = QtGui.QLabel(self.groupBox_3)
+        self.label_10.setObjectName(_fromUtf8("label_10"))
+        self.formLayout_5.setWidget(7, QtGui.QFormLayout.LabelRole, self.label_10)
+        self.laserBeamGaussian = QtGui.QCheckBox(self.groupBox_3)
+        self.laserBeamGaussian.setEnabled(True)
+        self.laserBeamGaussian.setText(_fromUtf8(""))
+        self.laserBeamGaussian.setTristate(False)
+        self.laserBeamGaussian.setObjectName(_fromUtf8("laserBeamGaussian"))
+        self.formLayout_5.setWidget(7, QtGui.QFormLayout.FieldRole, self.laserBeamGaussian)
         self.verticalLayout_2.addWidget(self.groupBox_3)
         self.graphBins = QtGui.QPushButton(self.centralwidget)
         self.graphBins.setAutoDefault(True)
@@ -126,6 +135,7 @@ class Ui_MainWindow(object):
         self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Wavelength (microns):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("MainWindow", "Electron Energy (eV):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("MainWindow", "Power (W):", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_10.setText(QtGui.QApplication.translate("MainWindow", "Gaussian Beam", None, QtGui.QApplication.UnicodeUTF8))
         self.graphBins.setText(QtGui.QApplication.translate("MainWindow", "Energy Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.graphIntegrals.setText(QtGui.QApplication.translate("MainWindow", "Graph Polarization Angles and Integrals", None, QtGui.QApplication.UnicodeUTF8))
 

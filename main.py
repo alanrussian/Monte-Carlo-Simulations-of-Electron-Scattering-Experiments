@@ -106,7 +106,7 @@ class Main(QMainWindow):
 
 			n = laserOnSimulation.affectedByLaserCount
 			p = laserOnSimulation.sumBins(startX, stopX, includeUnaffected = False) / laserOnSimulation.affectedByLaserCount
-			
+
 			errors.append(math.sqrt(n * p * (1 - p)))
 
 			print integral, errors[-1], n, p
@@ -137,6 +137,7 @@ class Main(QMainWindow):
 			scatterSimulation.laserBeamWavelength = self.__getNumericFieldValue("laserBeamWavelength")
 			scatterSimulation.laserBeamElectronEnergy = self.__getNumericFieldValue("laserBeamElectronEnergy")
 			scatterSimulation.laserBeamPower = self.__getNumericFieldValue("laserBeamPower")
+			scatterSimulation.laserBeamGaussian = self.mainWindow.laserBeamGaussian.isChecked()
 		except ValueError as exception:
 			errorMessage = QMessageBox.critical(self, "Input Error", ('Could not understand the value of the field "%s".\n\nPlease make sure that it\'s a number.' % exception.fieldName))
 			return False
