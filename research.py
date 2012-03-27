@@ -16,6 +16,7 @@ class ScatterSimulation:
 		self.laserBeamPower = None
 		self.laserBeamPolarizationAngleInDegrees = None
 		self.electronsCount = None
+		self.laserBeamGaussian = True
 		self.displayGraph = False
 		self.bins = {0: 0}
 		self.affectedByLaserCount = 0
@@ -27,8 +28,13 @@ class ScatterSimulation:
 			fluxDensity: watts/centimeter^2
 			electronEnergy: eV
 		"""
-		intensitySquared = 4.86 * math.pow(10, -13) * math.pow(wavelength, 4) * fluxDensity * electronEnergy * math.pow(math.cos(polarizationAngle), 2)
+		intensitySquared = 4.86e-13 * math.pow(wavelength, 4) * fluxDensity * electronEnergy * math.pow(math.cos(polarizationAngle), 2)
 		return math.sqrt(intensitySquared)
+
+	def getGaussianIntensity(self, pointRadius, beamRadius, wavelength, electronEnergy, polarizationAngle = 0):
+		fluxDensity = self.laserBeamPower / 1.3582121610010784550117605110352504215738144956922520 / math.pow(beamRadius * 100, 2) / math.exp(2 * math.pow(pointRadius, 2) / math.pow(beamRadius, 2))
+		return self.getIntensity(wavelength, fluxDensity, electronEnergy, polarizationAngle)
+		# return .2 / intensity / 1.3582121610010784550117605110352504215738144956922520 / math.pow(beamRadius, 2) / math.exp(2 * math.pow(pointRadius, 2) / math.pow(beamRadius, 2))
 
 	def getElectronScatterProbability(self, n, intensity = 0.35):
 		if n == 0:
@@ -80,12 +86,18 @@ class ScatterSimulation:
 				# Check electron beam intersection with laser beam
 				laserBeamRadiusAtPoint = self.laserBeamRadius / self.laserBeamApexLength * (self.laserBeamApexLength - (self.laserBeamIntersectionDistance + rotatedPointInBound.coordinates[0]))
 				laserBeamRadiusSquaredAtPoint = math.pow(laserBeamRadiusAtPoint, 2)
-				if math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= laserBeamRadiusSquaredAtPoint:
+				laserBeamPointRadialDistanceSquared = math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2)
+				if laserBeamPointRadialDistanceSquared <= laserBeamRadiusSquaredAtPoint:
 					# The * 10000 is for converting the area from meters^2 to centimeters^2
 					laserBeamCrossSectionalAreaAtPoint = math.pi * laserBeamRadiusSquaredAtPoint * 10000
 					laserBeamFluxDensityAtPoint = self.laserBeamPower / laserBeamCrossSectionalAreaAtPoint
 
 					intensity = self.getIntensity(self.laserBeamWavelength, laserBeamFluxDensityAtPoint, self.laserBeamElectronEnergy, laserBeamPolarizationAngleInRadians)
+					# print intensity
+					if (self.laserBeamGaussian):
+						radiusOfPoint = math.sqrt(laserBeamPointRadialDistanceSquared)
+						intensity = self.getGaussianIntensity(radiusOfPoint, laserBeamRadiusAtPoint, self.laserBeamWavelength, self.laserBeamElectronEnergy, laserBeamPolarizationAngleInRadians)
+						# print intensity
 					# xValues.append(rotatedPointInBound.coordinates[0])
 					# yValues.append(intensity)
 					# print intensity
