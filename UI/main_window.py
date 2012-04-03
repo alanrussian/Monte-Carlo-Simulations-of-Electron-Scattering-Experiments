@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Tue Apr 03 11:04:47 2012
+# Created: Tue Apr 03 12:26:14 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(302, 485)
+        MainWindow.resize(302, 504)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
@@ -35,11 +35,17 @@ class Ui_MainWindow(object):
         self.formLayout_4.setWidget(0, QtGui.QFormLayout.FieldRole, self.gasJetDiameter)
         self.label_11 = QtGui.QLabel(self.groupBox_2)
         self.label_11.setObjectName(_fromUtf8("label_11"))
-        self.formLayout_4.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_11)
+        self.formLayout_4.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_11)
         self.gasJetCosineSquaredDistribution = QtGui.QCheckBox(self.groupBox_2)
         self.gasJetCosineSquaredDistribution.setText(_fromUtf8(""))
         self.gasJetCosineSquaredDistribution.setObjectName(_fromUtf8("gasJetCosineSquaredDistribution"))
-        self.formLayout_4.setWidget(1, QtGui.QFormLayout.FieldRole, self.gasJetCosineSquaredDistribution)
+        self.formLayout_4.setWidget(2, QtGui.QFormLayout.FieldRole, self.gasJetCosineSquaredDistribution)
+        self.label_12 = QtGui.QLabel(self.groupBox_2)
+        self.label_12.setObjectName(_fromUtf8("label_12"))
+        self.formLayout_4.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_12)
+        self.gasJetIntersectionDistance = QtGui.QLineEdit(self.groupBox_2)
+        self.gasJetIntersectionDistance.setObjectName(_fromUtf8("gasJetIntersectionDistance"))
+        self.formLayout_4.setWidget(1, QtGui.QFormLayout.FieldRole, self.gasJetIntersectionDistance)
         self.verticalLayout_2.addWidget(self.groupBox_2)
         self.groupBox = QtGui.QGroupBox(self.centralwidget)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -134,6 +140,7 @@ class Ui_MainWindow(object):
         self.groupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Gas Jet", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "Diameter (m):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_11.setText(QtGui.QApplication.translate("MainWindow", "Cosine-Squared Distribution:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_12.setText(QtGui.QApplication.translate("MainWindow", "Intersection Distance (m):", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Electron Beam", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Diameter (m):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "Number of Electrons:", None, QtGui.QApplication.UnicodeUTF8))

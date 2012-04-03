@@ -9,6 +9,7 @@ class ScatterSimulation:
 		self.laserBeamIntersectionDistance = None
 		self.laserBeamApexLength = None
 		self.gasJetRadius = None
+		self.gasJetIntersectionDistance = None
 		self.gasJetCosineSquaredDistribution = False
 		self.horizontalAngleInDegrees = None
 		self.maximumBoundLength = None

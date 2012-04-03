@@ -35,6 +35,7 @@ class Main(QMainWindow):
 		# MAKE THIS READ FROM FILE
 		############################
 		self.mainWindow.gasJetDiameter.setText("1e-3")
+		self.mainWindow.gasJetIntersectionDistance.setText("1e-2")
 
 		self.mainWindow.electronBeamDiameter.setText("1e-3")
 		self.mainWindow.electronsCount.setText("1e5")
@@ -129,6 +130,7 @@ class Main(QMainWindow):
 	def configureScatterSimulation(self, scatterSimulation):
 		try:
 			scatterSimulation.gasJetRadius = self.__getNumericFieldValue("gasJetDiameter") / 2.0
+			scatterSimulation.gasJetIntersectionDistance = self.__getNumericFieldValue("gasJetIntersectionDistance")
 			scatterSimulation.gasJetCosineSquaredDistribution = self.mainWindow.gasJetCosineSquaredDistribution.isChecked()
 
 			scatterSimulation.electronBeamRadius = self.__getNumericFieldValue("electronBeamDiameter") / 2.0
