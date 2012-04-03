@@ -93,7 +93,7 @@ class Main(QMainWindow):
 
 		print
 		print "----------Laser On:----------"
-		print "Angle, Integral, Error, n, p"
+		print "Angle, Integral, Error, n, p, n * p"
 		for polarizationAngle in polarizationAngles:
 			laserOnSimulation.laserBeamPolarizationAngleInDegrees = polarizationAngle
 
@@ -101,15 +101,17 @@ class Main(QMainWindow):
 			laserOnSimulation.run()
 
 			binsIntegral = laserOnSimulation.sumBins(startX, stopX)
+			# binsIntegral = laserOnSimulation.sumBins(startX, stopX, includeUnaffected = False)
 			integral = binsIntegral - laserOffIntegral
 			integrals.append(integral)
 
 			n = laserOnSimulation.affectedByLaserCount
 			p = laserOnSimulation.sumBins(startX, stopX, includeUnaffected = False) / laserOnSimulation.affectedByLaserCount
+			# p = binsIntegral / laserOnSimulation.affectedByLaserCount
 
 			errors.append(math.sqrt(n * p * (1 - p)))
 
-			print integral, errors[-1], n, p
+			print integral, errors[-1], n, p, n * p
 
 			laserOnSimulation.reset()
 
