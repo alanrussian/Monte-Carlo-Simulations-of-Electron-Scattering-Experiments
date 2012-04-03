@@ -9,6 +9,7 @@ class ScatterSimulation:
 		self.laserBeamIntersectionDistance = None
 		self.laserBeamApexLength = None
 		self.gasJetRadius = None
+		self.gasJetCosineSquaredDistribution = False
 		self.horizontalAngleInDegrees = None
 		self.maximumBoundLength = None
 		self.laserBeamWavelength = None
@@ -16,7 +17,7 @@ class ScatterSimulation:
 		self.laserBeamPower = None
 		self.laserBeamPolarizationAngleInDegrees = None
 		self.electronsCount = None
-		self.laserBeamGaussian = True
+		self.laserBeamGaussianDistribution = True
 		self.displayGraph = False
 		self.bins = {0: 0}
 		self.affectedByLaserCount = 0
@@ -94,7 +95,7 @@ class ScatterSimulation:
 
 					intensity = self.getIntensity(self.laserBeamWavelength, laserBeamFluxDensityAtPoint, self.laserBeamElectronEnergy, laserBeamPolarizationAngleInRadians)
 					# print intensity
-					if (self.laserBeamGaussian):
+					if (self.laserBeamGaussianDistribution):
 						radiusOfPoint = math.sqrt(laserBeamPointRadialDistanceSquared)
 						intensity = self.getGaussianIntensity(radiusOfPoint, laserBeamRadiusAtPoint, self.laserBeamWavelength, self.laserBeamElectronEnergy, laserBeamPolarizationAngleInRadians)
 						# print intensity

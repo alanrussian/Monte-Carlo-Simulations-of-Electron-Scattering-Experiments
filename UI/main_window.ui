@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>302</width>
-    <height>468</height>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,9 +21,9 @@
        <string>Gas Jet</string>
       </property>
       <layout class="QFormLayout" name="formLayout_4">
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="gasJetDiameter"/>
-       </item>
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
@@ -31,9 +31,28 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="gasJetDiameter"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Cosine-Squared Distribution:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="gasJetCosineSquaredDistribution">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
       </layout>
       <zorder>label_3</zorder>
       <zorder>gasJetDiameter</zorder>
+      <zorder>label_11</zorder>
+      <zorder>gasJetCosineSquaredDistribution</zorder>
      </widget>
     </item>
     <item>
@@ -140,12 +159,12 @@
        <item row="7" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>Gaussian Beam</string>
+          <string>Gaussian Beam:</string>
          </property>
         </widget>
        </item>
        <item row="7" column="1">
-        <widget class="QCheckBox" name="laserBeamGaussian">
+        <widget class="QCheckBox" name="laserBeamGaussianDistribution">
          <property name="enabled">
           <bool>true</bool>
          </property>

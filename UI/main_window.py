@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Tue Mar 20 11:43:39 2012
+# Created: Tue Apr 03 11:04:47 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(302, 468)
+        MainWindow.resize(302, 485)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
@@ -25,13 +25,21 @@ class Ui_MainWindow(object):
         self.groupBox_2 = QtGui.QGroupBox(self.centralwidget)
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.formLayout_4 = QtGui.QFormLayout(self.groupBox_2)
+        self.formLayout_4.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout_4.setObjectName(_fromUtf8("formLayout_4"))
-        self.gasJetDiameter = QtGui.QLineEdit(self.groupBox_2)
-        self.gasJetDiameter.setObjectName(_fromUtf8("gasJetDiameter"))
-        self.formLayout_4.setWidget(0, QtGui.QFormLayout.FieldRole, self.gasJetDiameter)
         self.label_3 = QtGui.QLabel(self.groupBox_2)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.formLayout_4.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.gasJetDiameter = QtGui.QLineEdit(self.groupBox_2)
+        self.gasJetDiameter.setObjectName(_fromUtf8("gasJetDiameter"))
+        self.formLayout_4.setWidget(0, QtGui.QFormLayout.FieldRole, self.gasJetDiameter)
+        self.label_11 = QtGui.QLabel(self.groupBox_2)
+        self.label_11.setObjectName(_fromUtf8("label_11"))
+        self.formLayout_4.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_11)
+        self.gasJetCosineSquaredDistribution = QtGui.QCheckBox(self.groupBox_2)
+        self.gasJetCosineSquaredDistribution.setText(_fromUtf8(""))
+        self.gasJetCosineSquaredDistribution.setObjectName(_fromUtf8("gasJetCosineSquaredDistribution"))
+        self.formLayout_4.setWidget(1, QtGui.QFormLayout.FieldRole, self.gasJetCosineSquaredDistribution)
         self.verticalLayout_2.addWidget(self.groupBox_2)
         self.groupBox = QtGui.QGroupBox(self.centralwidget)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -95,12 +103,12 @@ class Ui_MainWindow(object):
         self.label_10 = QtGui.QLabel(self.groupBox_3)
         self.label_10.setObjectName(_fromUtf8("label_10"))
         self.formLayout_5.setWidget(7, QtGui.QFormLayout.LabelRole, self.label_10)
-        self.laserBeamGaussian = QtGui.QCheckBox(self.groupBox_3)
-        self.laserBeamGaussian.setEnabled(True)
-        self.laserBeamGaussian.setText(_fromUtf8(""))
-        self.laserBeamGaussian.setTristate(False)
-        self.laserBeamGaussian.setObjectName(_fromUtf8("laserBeamGaussian"))
-        self.formLayout_5.setWidget(7, QtGui.QFormLayout.FieldRole, self.laserBeamGaussian)
+        self.laserBeamGaussianDistribution = QtGui.QCheckBox(self.groupBox_3)
+        self.laserBeamGaussianDistribution.setEnabled(True)
+        self.laserBeamGaussianDistribution.setText(_fromUtf8(""))
+        self.laserBeamGaussianDistribution.setTristate(False)
+        self.laserBeamGaussianDistribution.setObjectName(_fromUtf8("laserBeamGaussianDistribution"))
+        self.formLayout_5.setWidget(7, QtGui.QFormLayout.FieldRole, self.laserBeamGaussianDistribution)
         self.verticalLayout_2.addWidget(self.groupBox_3)
         self.graphBins = QtGui.QPushButton(self.centralwidget)
         self.graphBins.setAutoDefault(True)
@@ -125,6 +133,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("MainWindow", "Gas Jet", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("MainWindow", "Diameter (m):", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_11.setText(QtGui.QApplication.translate("MainWindow", "Cosine-Squared Distribution:", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Electron Beam", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Diameter (m):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("MainWindow", "Number of Electrons:", None, QtGui.QApplication.UnicodeUTF8))
@@ -135,7 +144,7 @@ class Ui_MainWindow(object):
         self.label_7.setText(QtGui.QApplication.translate("MainWindow", "Wavelength (microns):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("MainWindow", "Electron Energy (eV):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("MainWindow", "Power (W):", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_10.setText(QtGui.QApplication.translate("MainWindow", "Gaussian Beam", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_10.setText(QtGui.QApplication.translate("MainWindow", "Gaussian Beam:", None, QtGui.QApplication.UnicodeUTF8))
         self.graphBins.setText(QtGui.QApplication.translate("MainWindow", "Energy Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.graphIntegrals.setText(QtGui.QApplication.translate("MainWindow", "Graph Polarization Angles and Integrals", None, QtGui.QApplication.UnicodeUTF8))
 

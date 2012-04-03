@@ -129,6 +129,7 @@ class Main(QMainWindow):
 	def configureScatterSimulation(self, scatterSimulation):
 		try:
 			scatterSimulation.gasJetRadius = self.__getNumericFieldValue("gasJetDiameter") / 2.0
+			scatterSimulation.gasJetCosineSquaredDistribution = self.mainWindow.gasJetCosineSquaredDistribution.isChecked()
 
 			scatterSimulation.electronBeamRadius = self.__getNumericFieldValue("electronBeamDiameter") / 2.0
 			scatterSimulation.electronsCount = self.__getNumericFieldValue("electronsCount")
@@ -139,7 +140,7 @@ class Main(QMainWindow):
 			scatterSimulation.laserBeamWavelength = self.__getNumericFieldValue("laserBeamWavelength")
 			scatterSimulation.laserBeamElectronEnergy = self.__getNumericFieldValue("laserBeamElectronEnergy")
 			scatterSimulation.laserBeamPower = self.__getNumericFieldValue("laserBeamPower")
-			scatterSimulation.laserBeamGaussian = self.mainWindow.laserBeamGaussian.isChecked()
+			scatterSimulation.laserBeamGaussianDistribution = self.mainWindow.laserBeamGaussianDistribution.isChecked()
 		except ValueError as exception:
 			errorMessage = QMessageBox.critical(self, "Input Error", ('Could not understand the value of the field "%s".\n\nPlease make sure that it\'s a number.' % exception.fieldName))
 			return False
