@@ -57,17 +57,19 @@ class ScatterSimulation:
 		horizontalAngleInRadians = self.horizontalAngleInDegrees * math.pi / 180
 		laserBeamPolarizationAngleInRadians = self.laserBeamPolarizationAngleInDegrees * math.pi / 180
 
-		if self.horizontalAngleInDegrees == 90:
-			boundLength = self.electronBeamRadius * 2.0
-		else:
-			boundLength = (self.electronBeamRadius * 2.0 / math.sin(horizontalAngleInRadians)) + (self.laserBeamRadius * 2.0 / math.tan(horizontalAngleInRadians))
+		# if self.horizontalAngleInDegrees == 90:
+			# boundLength = self.electronBeamRadius * 2.0
+		# else:
+			# boundLength = (self.electronBeamRadius * 2.0 / math.sin(horizontalAngleInRadians)) + (self.laserBeamRadius * 2.0 / math.tan(horizontalAngleInRadians))
 
-		if boundLength > self.maximumBoundLength:
-			boundLength = self.maximumBoundLength
+		# if boundLength > self.maximumBoundLength:
+			# boundLength = self.maximumBoundLength
+
+		boundLength = 2 * max(self.electronBeamRadius, self.laserBeamRadius)
 
 		# # # # # # # # # # electronBeamRadiusSquared = math.pow(electronBeamRadius, 2)
 		laserBeamRadiusSquared = math.pow(self.laserBeamRadius, 2)
-		gasJetRadiusSquared = math.pow(self.gasJetRadius, 2)
+		electronBeamRadiusSquared = math.pow(self.electronBeamRadius, 2)
 
 		# In centimeters for the intensity function
 		laserBeamCrossSectionalAreaAtBase = math.pi * math.pow(self.laserBeamRadius * 100, 2)
@@ -79,15 +81,15 @@ class ScatterSimulation:
 		while electronsCount > 0:
 			electronsCount -= 1
 
-			randomPointInBound = Point.getRandomPointInCylinder(self.electronBeamRadius, boundLength)
-			rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(horizontalAngleInRadians)
+			randomPointInBound = Point.getRandomPointInCylinder(self.gasJetRadius, boundLength)
+			rotatedPointInBound = Point((randomPointInBound.coordinates[2], randomPointInBound.coordinates[0])).rotate(horizontalAngleInRadians)
 
-			# Check electron beam intersection with gas jet
-			if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= gasJetRadiusSquared:
+			# Check electron beam intersection with electron beam
+			if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(randomPointInBound.coordinates[1], 2) <= electronBeamRadiusSquared:
 				# Check electron beam intersection with laser beam
 				laserBeamRadiusAtPoint = self.laserBeamRadius / self.laserBeamApexLength * (self.laserBeamApexLength - (self.laserBeamIntersectionDistance + rotatedPointInBound.coordinates[0]))
 				laserBeamRadiusSquaredAtPoint = math.pow(laserBeamRadiusAtPoint, 2)
-				laserBeamPointRadialDistanceSquared = math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2)
+				laserBeamPointRadialDistanceSquared = math.pow(randomPointInBound.coordinates[2], 2) + math.pow(randomPointInBound.coordinates[0], 2)
 				if laserBeamPointRadialDistanceSquared <= laserBeamRadiusSquaredAtPoint:
 					# The * 10000 is for converting the area from meters^2 to centimeters^2
 					laserBeamCrossSectionalAreaAtPoint = math.pi * laserBeamRadiusSquaredAtPoint * 10000
@@ -359,7 +361,7 @@ def getCylinderConeCylinderIntersectionVolume(horizontalCylinderRadius, horizont
 	horizontalCylinderVolume = math.pi * horizontalCylinderRadiusSquared * boundLength
 	return pointsInIntersection * horizontalCylinderVolume / pointsToGenerate
 
-def getCylinderCylinderCylinderIntersectionVolume(horizontalCylinderOneRadius, horizontalCylinderTwoRadius, verticalCylinderRadius, horizontalAngleInDegrees, pointsToGenerate = 10**5):
+def getCylinderCylinderCylinderIntersectionVolumeOld(horizontalCylinderOneRadius, horizontalCylinderTwoRadius, verticalCylinderRadius, horizontalAngleInDegrees, pointsToGenerate = 10**5):
 	horizontalAngleInRadians = horizontalAngleInDegrees * math.pi / 180
 
 	if horizontalAngleInDegrees == 90:
@@ -388,6 +390,33 @@ def getCylinderCylinderCylinderIntersectionVolume(horizontalCylinderOneRadius, h
 
 	horizontalCylinderOneVolume = math.pi * horizontalCylinderOneRadiusSquared * boundLength
 	return pointsInIntersection * horizontalCylinderOneVolume / pointsToGenerate
+
+def getCylinderCylinderCylinderIntersectionVolume(horizontalCylinderOneRadius, horizontalCylinderTwoRadius, verticalCylinderRadius, horizontalAngleInDegrees, pointsToGenerate = 10**5):
+	horizontalAngleInRadians = horizontalAngleInDegrees * math.pi / 180
+
+	boundLength = 2 * max(horizontalCylinderOneRadius, horizontalCylinderTwoRadius)
+
+	horizontalCylinderOneRadiusSquared = math.pow(horizontalCylinderOneRadius, 2)
+	horizontalCylinderTwoRadiusSquared = math.pow(horizontalCylinderTwoRadius, 2)
+	verticalCylinderRadiusSquared = math.pow(verticalCylinderRadius, 2)
+
+	points = pointsToGenerate = int(pointsToGenerate)
+	pointsInIntersection = 0
+
+	while points > 0:
+		points -= 1
+
+		randomPointInBound = Point.getRandomPointInCylinder(verticalCylinderRadius, boundLength)
+		rotatedPointInBound = Point((randomPointInBound.coordinates[2], randomPointInBound.coordinates[0])).rotate(horizontalAngleInRadians)
+
+		# Check horizontal cylinder intersection with vertical cylinder
+		if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(randomPointInBound.coordinates[1], 2) <= horizontalCylinderOneRadiusSquared:
+			# Check horizontal cylinder intersection with horizontal cone
+			if math.pow(randomPointInBound.coordinates[2], 2) + math.pow(randomPointInBound.coordinates[0], 2) <= horizontalCylinderTwoRadiusSquared:
+				pointsInIntersection += 1
+
+	verticalCylinderVolume = math.pi * verticalCylinderRadiusSquared * boundLength
+	return pointsInIntersection * verticalCylinderVolume / pointsToGenerate
 
 def getCylinderCylinderIntersectionVolume(cylinderOneRadius, cylinderTwoRadius, angleInDegrees, pointsToGenerate = 10**5):
 	angleInRadians = angleInDegrees * math.pi / 180
