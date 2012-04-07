@@ -76,19 +76,41 @@ class ScatterSimulation:
 		# xValues = []
 		# yValues = []
 
+		# scalers = []
 		electronsCount = self.electronsCount
 		while electronsCount > 0:
 			electronsCount -= 1
 
 			randomPointInBound = Point.getRandomPointInCylinder(self.electronBeamRadius, boundLength)
-			rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(horizontalAngleInRadians)
+			rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1])).rotate(horizontalAngleInRadians)
 
 			# Check electron beam intersection with gas jet
-			if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= gasJetRadiusSquared:
+			gasJetPointRadialDistanceSquared = math.pow(randomPointInBound.coordinates[0], 2) + math.pow(randomPointInBound.coordinates[1], 2)
+			if self.gasJetCosineSquaredDistribution or gasJetPointRadialDistanceSquared <= gasJetRadiusSquared:
+				if self.gasJetCosineSquaredDistribution:
+					pointVerticalDistanceFromGasJet = self.gasJetIntersectionDistance + randomPointInBound.coordinates[2]
+					pointVerticalDistanceFromGasJetSquared = math.pow(pointVerticalDistanceFromGasJet, 2)
+
+					k = pointVerticalDistanceFromGasJetSquared
+					pointAngleFromGasJet = math.atan(gasJetPointRadialDistanceSquared / pointVerticalDistanceFromGasJetSquared)
+					pointDistanceFromGasJetSquared = pointVerticalDistanceFromGasJetSquared + gasJetPointRadialDistanceSquared
+
+					scaler = k * math.pow(math.cos(pointAngleFromGasJet), 2) / pointDistanceFromGasJetSquared
+
+					# The following implements the random number testing method
+					# if random.random() > scaler:
+						# continue
+					# else:
+						# scaler = 1
+
+					# scalers.append(scaler)
+				else:
+					scaler = 1
+
 				# Check electron beam intersection with laser beam
-				laserBeamRadiusAtPoint = self.laserBeamRadius / self.laserBeamApexLength * (self.laserBeamApexLength - (self.laserBeamIntersectionDistance + rotatedPointInBound.coordinates[0]))
+				laserBeamRadiusAtPoint = self.laserBeamRadius / self.laserBeamApexLength * (self.laserBeamApexLength - (self.laserBeamIntersectionDistance + rotatedPointInBound.coordinates[1]))
 				laserBeamRadiusSquaredAtPoint = math.pow(laserBeamRadiusAtPoint, 2)
-				laserBeamPointRadialDistanceSquared = math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2)
+				laserBeamPointRadialDistanceSquared = math.pow(rotatedPointInBound.coordinates[1], 2) + math.pow(randomPointInBound.coordinates[2], 2)
 				if laserBeamPointRadialDistanceSquared <= laserBeamRadiusSquaredAtPoint:
 					# The * 10000 is for converting the area from meters^2 to centimeters^2
 					laserBeamCrossSectionalAreaAtPoint = math.pi * laserBeamRadiusSquaredAtPoint * 10000
@@ -120,22 +142,28 @@ class ScatterSimulation:
 						binNumber += 1
 
 					if binNumber not in self.bins:
-						self.bins[binNumber] = 1
+						self.bins[binNumber] = scaler
 					else:
-						self.bins[binNumber] += 1
+						self.bins[binNumber] += scaler
 
 					if self.displayGraph:
 						completelyIntersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
 
 					self.affectedByLaserCount += 1
 				else:
-					self.bins[0] += 1
+					self.bins[0] += scaler
 					self.unaffectedByLaserCount += 1
 
 					if self.displayGraph:
 						partiallyIntersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
 			elif self.displayGraph:
 				nonintersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
+
+		# if len(scalers):
+			# import pylab
+			# n, bins, patches = pylab.hist(scalers, 100, normed = 1, histtype = "stepfilled")
+			# pylab.setp(patches, "facecolor", "g", "alpha", 0.75)
+			# pylab.show()
 
 		# print max(yValues), min(yValues)
 		# import matplotlib.pyplot
@@ -347,14 +375,14 @@ def getCylinderConeCylinderIntersectionVolume(horizontalCylinderRadius, horizont
 		points -= 1
 
 		randomPointInBound = Point.getRandomPointInCylinder(horizontalCylinderRadius, boundLength)
-		rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(horizontalAngleInRadians)
+		rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1])).rotate(horizontalAngleInRadians)
 
 		# Check horizontal cylinder intersection with vertical cylinder
-		if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= verticalCylinderRadiusSquared:
+		if math.pow(randomPointInBound.coordinates[0], 2) + math.pow(randomPointInBound.coordinates[1], 2) <= verticalCylinderRadiusSquared:
 			# Check horizontal cylinder intersection with horizontal cone
-			horizontalConeRadiusAtPoint = horizontalConeRadius / horizontalConeApexLength * (horizontalConeApexLength - (horizontalConeIntersectionDistance + rotatedPointInBound.coordinates[0]))
+			horizontalConeRadiusAtPoint = horizontalConeRadius / horizontalConeApexLength * (horizontalConeApexLength - (horizontalConeIntersectionDistance + rotatedPointInBound.coordinates[1]))
 			horizontalConeSquaredAtPoint = math.pow(horizontalConeRadiusAtPoint, 2)
-			if math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= horizontalConeSquaredAtPoint:
+			if math.pow(rotatedPointInBound.coordinates[1], 2) + math.pow(randomPointInBound.coordinates[2], 2) <= horizontalConeSquaredAtPoint:
 				pointsInIntersection += 1
 
 	horizontalCylinderVolume = math.pi * horizontalCylinderRadiusSquared * boundLength
@@ -379,12 +407,12 @@ def getCylinderCylinderCylinderIntersectionVolume(horizontalCylinderOneRadius, h
 		points -= 1
 
 		randomPointInBound = Point.getRandomPointInCylinder(horizontalCylinderOneRadius, boundLength)
-		rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[2])).rotate(horizontalAngleInRadians)
+		rotatedPointInBound = Point((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1])).rotate(horizontalAngleInRadians)
 
 		# Check horizontal cylinder intersection with vertical cylinder
-		if math.pow(rotatedPointInBound.coordinates[0], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= verticalCylinderRadiusSquared:
+		if math.pow(randomPointInBound.coordinates[0], 2) + math.pow(randomPointInBound.coordinates[1], 2) <= verticalCylinderRadiusSquared:
 			# Check horizontal cylinder intersection with horizontal cone
-			if math.pow(randomPointInBound.coordinates[1], 2) + math.pow(rotatedPointInBound.coordinates[1], 2) <= horizontalCylinderTwoRadiusSquared:
+			if math.pow(rotatedPointInBound.coordinates[1], 2) + math.pow(randomPointInBound.coordinates[2], 2) <= horizontalCylinderTwoRadiusSquared:
 				pointsInIntersection += 1
 
 	horizontalCylinderOneVolume = math.pi * horizontalCylinderOneRadiusSquared * boundLength
