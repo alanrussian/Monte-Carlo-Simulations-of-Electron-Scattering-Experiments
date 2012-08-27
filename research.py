@@ -36,7 +36,6 @@ class ScatterSimulation:
 	def getGaussianIntensity(self, pointRadius, beamRadius, wavelength, electronEnergy, polarizationAngle = 0):
 		fluxDensity = self.laserBeamPower / 1.3582121610010784550117605110352504215738144956922520 / math.pow(beamRadius * 100, 2) / math.exp(2 * math.pow(pointRadius, 2) / math.pow(beamRadius, 2))
 		return self.getIntensity(wavelength, fluxDensity, electronEnergy, polarizationAngle)
-		# return .2 / intensity / 1.3582121610010784550117605110352504215738144956922520 / math.pow(beamRadius, 2) / math.exp(2 * math.pow(pointRadius, 2) / math.pow(beamRadius, 2))
 
 	def getElectronScatterProbability(self, n, intensity = 0.35):
 		if n == 0:
@@ -66,17 +65,12 @@ class ScatterSimulation:
 		if boundLength > self.maximumBoundLength:
 			boundLength = self.maximumBoundLength
 
-		# # # # # # # # # # electronBeamRadiusSquared = math.pow(electronBeamRadius, 2)
 		laserBeamRadiusSquared = math.pow(self.laserBeamRadius, 2)
 		gasJetRadiusSquared = math.pow(self.gasJetRadius, 2)
 
 		# In centimeters for the intensity function
 		laserBeamCrossSectionalAreaAtBase = math.pi * math.pow(self.laserBeamRadius * 100, 2)
 
-		# xValues = []
-		# yValues = []
-
-		# scalers = []
 		electronsCount = self.electronsCount
 		while electronsCount > 0:
 			electronsCount -= 1
@@ -97,13 +91,6 @@ class ScatterSimulation:
 
 					scaler = k * math.pow(math.cos(pointAngleFromGasJet), 2) / pointDistanceFromGasJetSquared
 
-					# The following implements the random number testing method
-					# if random.random() > scaler:
-						# continue
-					# else:
-						# scaler = 1
-
-					# scalers.append(scaler)
 				else:
 					scaler = 1
 
@@ -117,14 +104,9 @@ class ScatterSimulation:
 					laserBeamFluxDensityAtPoint = self.laserBeamPower / laserBeamCrossSectionalAreaAtPoint
 
 					intensity = self.getIntensity(self.laserBeamWavelength, laserBeamFluxDensityAtPoint, self.laserBeamElectronEnergy, laserBeamPolarizationAngleInRadians)
-					# print intensity
 					if (self.laserBeamGaussianDistribution):
 						radiusOfPoint = math.sqrt(laserBeamPointRadialDistanceSquared)
 						intensity = self.getGaussianIntensity(radiusOfPoint, laserBeamRadiusAtPoint, self.laserBeamWavelength, self.laserBeamElectronEnergy, laserBeamPolarizationAngleInRadians)
-						# print intensity
-					# xValues.append(rotatedPointInBound.coordinates[0])
-					# yValues.append(intensity)
-					# print intensity
 
 					randomNumber = random.random()
 					binNumber = 0
@@ -158,22 +140,6 @@ class ScatterSimulation:
 						partiallyIntersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
 			elif self.displayGraph:
 				nonintersectingPoints.append((randomPointInBound.coordinates[0], randomPointInBound.coordinates[1], randomPointInBound.coordinates[2]))
-
-		# if len(scalers):
-			# import pylab
-			# n, bins, patches = pylab.hist(scalers, 100, normed = 1, histtype = "stepfilled")
-			# pylab.setp(patches, "facecolor", "g", "alpha", 0.75)
-			# pylab.show()
-
-		# print max(yValues), min(yValues)
-		# import matplotlib.pyplot
-		# figure = matplotlib.pyplot.figure()
-		# axii = figure.add_subplot(111)
-		# axii.scatter(xValues, yValues, marker="o")
-		# axii.set_xlabel('x')
-		# axii.set_ylabel('Cross Sectional Area')
-		# axii.set_ybound(0)
-		# matplotlib.pyplot.show()
 
 		if self.displayGraph:
 			if (len(completelyIntersectingPoints)):
@@ -249,19 +215,6 @@ class ScatterSimulation:
 		axii.set_xticks([1.17 * bin for bin in xrange(-max([lowestBin * -1, highestBin]), max([lowestBin * -1, highestBin]) + 1)])
 		matplotlib.pyplot.show()
 
-	def _integratePoints(self, xValues, yValues, startX = False, stopX = False):
-		"""Approximates an integral using the trapezoid rule"""
-		sum = 0.0
-		for i in xrange(1, len(xValues)):
-			if startX is not False and xValues[i - 1] < startX:
-				continue
-			if stopX is not False and xValues[i] > stopX:
-				break
-
-			sum += (yValues[i] + yValues[i - 1]) / 2 * (xValues[i] - xValues[i - 1])
-
-		return sum
-
 	def _sumPoints(self, xValues, yValues, startX = False, stopX = False):
 		"""Approximates an integral using the trapezoid rule"""
 		sum = 0.0
@@ -274,14 +227,6 @@ class ScatterSimulation:
 			sum += yValues[i]
 
 		return sum
-
-	def integrateBins(self, startX = False, stopX = False, scale = 1, includeUnaffected = True):
-		xValues, yValues = self.binsToPoints(includeUnaffected)
-
-		if not scale == 1:
-			yValues = [y * scale for y in yValues]
-
-		return self._integratePoints(xValues, yValues, startX, stopX)
 
 	def sumBins(self, startX = False, stopX = False, scale = 1, includeUnaffected = True):
 		xValues, yValues = self.binsToPoints(includeUnaffected)

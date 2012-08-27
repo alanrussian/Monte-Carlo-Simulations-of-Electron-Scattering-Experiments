@@ -7,9 +7,6 @@ from PyQt4.QtGui import QMessageBox
 # Main window made in Designer
 from UI.main_window import Ui_MainWindow
 
-# Dialogs
-from bins import BinsDialog
-
 # Imports for research
 from research import ScatterSimulation
 import math
@@ -20,8 +17,6 @@ class Main(QMainWindow):
 
 		# Set up the user interface from Designer
 		self.mainWindow = Ui_MainWindow()
-
-		# Set it up
 		self.mainWindow.setupUi(self)
 
 		# Change the ui
@@ -31,9 +26,7 @@ class Main(QMainWindow):
 		self.show()
 
 	def setDefaultValues(self):
-		############################
-		# MAKE THIS READ FROM FILE
-		############################
+		# TODO: Make this read from a file
 		self.mainWindow.gasJetDiameter.setText("1e-3")
 		self.mainWindow.gasJetIntersectionDistance.setText("1e-2")
 
@@ -64,7 +57,7 @@ class Main(QMainWindow):
 		scatterSimulation.plotBins()
 
 	def displayPolarizationAngleVersusIntegral(self, startX = False, stopX = False):
-		# RETRIEVE THIS FROM INPUT
+		# TODO: Retrieve this from input
 		startX, stopX = -1.42, -0.92
 
 		print "----------Laser Off:----------"
@@ -81,6 +74,7 @@ class Main(QMainWindow):
 		calculatedRatioInIntersection = sum(laserOffSimulation.getBins().values()) / laserOffSimulation.electronsCount
 		scale = theoreticalRatioInIntersection / calculatedRatioInIntersection
 
+		# TODO: Fix errors.  They are not being computed correctly.
 		laserOffIntegral = laserOffSimulation.sumBins(startX, stopX, scale)
 		laserOffError = 0
 		laserOffP = laserOffIntegral / laserOffSimulation.sumBins(scale = scale)
@@ -128,6 +122,7 @@ class Main(QMainWindow):
 		matplotlib.pyplot.show()
 
 	def configureScatterSimulation(self, scatterSimulation):
+		"""Configures the scatter simulation based on the GUI input"""
 		try:
 			scatterSimulation.gasJetRadius = self.__getNumericFieldValue("gasJetDiameter") / 2.0
 			scatterSimulation.gasJetIntersectionDistance = self.__getNumericFieldValue("gasJetIntersectionDistance")
@@ -163,6 +158,7 @@ class Main(QMainWindow):
 		except ValueError as exception:
 			exception.fieldName = fieldName
 			raise exception
+
 # Create the UI
 app = QtGui.QApplication(sys.argv)
 main = Main()

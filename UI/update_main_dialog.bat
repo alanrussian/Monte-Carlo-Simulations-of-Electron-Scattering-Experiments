@@ -1,1 +1,0 @@
-pyuic4 -o main_dialog.py main_dialog.ui
